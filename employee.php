@@ -22,11 +22,28 @@
 require('config/config.php');
 require('config/db.php');
 
-$query = 'SELECT employee.lastname, employee.firstname,employee.address, office.name as office_name FROM employee, office WHERE employee.office_id = office.id';
+$results_per_page = 30;
+
+$query = "SELECT * FROM employee";
+$result = mysqli_query($conn, $query);
+$number_of_result = mysqli_num_rows($result);
+
+$number_of_page = ceil($number_of_result / $results_per_page);
+
+if (!isset($_GET['page'])){
+    $page = 1;
+}else{
+    $page = $_GET['page'];
+}
+
+$page_first_result = ($page-1) * $results_per_page;
+
+$query = 'SELECT employee.lastname, employee.firstname,employee.address, office.name as office_name 
+FROM employee, office WHERE employee.office_id = office.id LIMIT '. $page_first_result . ',' . $results_per_page;
 
 $result = mysqli_query($conn, $query);
 
-$offices = mysqli_fetch_all($result, MYSQLI_ASSOC);
+$employee = mysqli_fetch_all($result, MYSQLI_ASSOC);
 
 mysqli_free_result($result);
 
@@ -74,18 +91,22 @@ mysqli_close($conn);
                                             <th>Office</th>
                                         </thead>
                                         <tbody>
-                                        <?php foreach($offices as $office) : ?>
+                                        <?php foreach($employee as $employee) : ?>
                                             <tr>
-                                        <td><?php echo $office ['lastname']; ?></td>
-                                        <td><?php echo $office ['firstname']; ?></td>
-                                        <td><?php echo $office ['address']; ?></td>
-                                        <td><?php echo $office ['office_name']; ?></td>
+                                        <td><?php echo $employee ['lastname']; ?></td>
+                                        <td><?php echo $employee ['firstname']; ?></td>
+                                        <td><?php echo $employee ['address']; ?></td>
+                                        <td><?php echo $employee ['office_name']; ?></td>
                                             </tr>
                                             <?php endforeach ?>
                                         </tbody>
                                     </table>
                                 </div>
                             </div>
+                    <?php
+                        for ($page=1; $page <= $number_of_page; $page++){ 
+                        echo '<a href="employee.php?page='. $page .'"> '. $page .'</a>';}
+                    ?>
                         </div>
                     </div>
                 </div>
