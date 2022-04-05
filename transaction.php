@@ -22,13 +22,11 @@
 require('config/config.php');
 require('config/db.php');
 
-$query = 'SELECT * FROM office ORDER BY name';
+$query = 'SELECT CONCAT (employee.lastname,",",employee.firstname) AS employee_fullname, transaction.datelog, transaction.documentcode,transaction.action,transaction.remarks,office.name AS office_name FROM employee, office, transaction WHERE transaction.employee_id=employee.id AND employee.office_id = office.id';
 
-$result = mysqli_query($conn, $query);
+$result = mysqli_query($conn, $query)or die( mysqli_error($conn));
 
-$offices = mysqli_fetch_all($result, MYSQLI_ASSOC);
-
-mysqli_free_result($result);
+$transactions = mysqli_fetch_all($result, MYSQLI_ASSOC);
 
 mysqli_close($conn);
 
@@ -55,30 +53,28 @@ mysqli_close($conn);
                         <div class="col-md-12">
                             <div class="card strpied-tabled-with-hover">
                                 <div class="card-header ">
-                                    <h4 class="card-title">Office</h4>
+                                    <h4 class="card-title">Transactions</h4>
                                     <p class="card-category">Here is a subtitle for this table</p>
                                 </div>
                                 <div class="card-body table-full-width table-responsive">
                                     <table class="table table-hover table-striped">
                                         <thead>
-                                            <th>Name</th>
-                                            <th>Contact Number</th>
-                                            <th>Email</th>
-                                            <th>Address</th>
-                                            <th>City</th>
-                                            <th>Country</th>
-                                            <th>Postal</th>
+                                            <th>Date Log</th>
+                                            <th>Document Code</th>
+                                            <th>Action</th>
+                                            <th>Office</th>
+                                            <th>Employee</th>
+                                            <th>Remarks</th>
                                         </thead>
                                         <tbody>
-                                        <?php foreach($offices as $office) : ?>
+                                <?php foreach($transactions as $transaction) : ?>
                                             <tr>
-                                        <td><?php echo $office ['name']; ?></td>
-                                        <td><?php echo $office ['contactnum']; ?></td>
-                                        <td><?php echo $office ['email']; ?></td>
-                                        <td><?php echo $office ['address']; ?></td>
-                                        <td><?php echo $office ['city']; ?></td>
-                                        <td><?php echo $office ['country']; ?></td>
-                                        <td><?php echo $office ['postal']; ?></td>
+                                        <td><?php echo $transaction ['datelog']; ?></td>
+                                        <td><?php echo $transaction ['documentcode']; ?></td>
+                                        <td><?php echo $transaction ['action']; ?></td>
+                                        <td><?php echo $transaction ['office_name']; ?></td>
+                                        <td><?php echo $transaction ['employee_fullname']; ?></td>
+                                        <td><?php echo $transaction ['remarks']; ?></td>
                                             </tr>
                                             <?php endforeach ?>
                                         </tbody>

@@ -22,7 +22,7 @@
 require('config/config.php');
 require('config/db.php');
 
-$query = 'SELECT * FROM office ORDER BY name';
+$query = 'SELECT employee.lastname, employee.firstname,employee.address, office.name as office_name FROM employee, office WHERE employee.office_id = office.id';
 
 $result = mysqli_query($conn, $query);
 
@@ -55,30 +55,24 @@ mysqli_close($conn);
                         <div class="col-md-12">
                             <div class="card strpied-tabled-with-hover">
                                 <div class="card-header ">
-                                    <h4 class="card-title">Office</h4>
+                                    <h4 class="card-title">Employee</h4>
                                     <p class="card-category">Here is a subtitle for this table</p>
                                 </div>
                                 <div class="card-body table-full-width table-responsive">
                                     <table class="table table-hover table-striped">
                                         <thead>
-                                            <th>Name</th>
-                                            <th>Contact Number</th>
-                                            <th>Email</th>
+                                            <th>Last Name</th>
+                                            <th>First Name</th>
                                             <th>Address</th>
-                                            <th>City</th>
-                                            <th>Country</th>
-                                            <th>Postal</th>
+                                            <th>Office</th>
                                         </thead>
                                         <tbody>
                                         <?php foreach($offices as $office) : ?>
                                             <tr>
-                                        <td><?php echo $office ['name']; ?></td>
-                                        <td><?php echo $office ['contactnum']; ?></td>
-                                        <td><?php echo $office ['email']; ?></td>
+                                        <td><?php echo $office ['lastname']; ?></td>
+                                        <td><?php echo $office ['firstname']; ?></td>
                                         <td><?php echo $office ['address']; ?></td>
-                                        <td><?php echo $office ['city']; ?></td>
-                                        <td><?php echo $office ['country']; ?></td>
-                                        <td><?php echo $office ['postal']; ?></td>
+                                        <td><?php echo $office ['office_name']; ?></td>
                                             </tr>
                                             <?php endforeach ?>
                                         </tbody>
