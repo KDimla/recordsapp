@@ -26,6 +26,7 @@
             </div>
         </div>
         <div class="main-panel">
+        <?php include('includes/navbar.php'); ?>
             <div class="content">
                 <div class="container-fluid">
                     <div class="section">

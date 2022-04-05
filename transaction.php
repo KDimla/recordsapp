@@ -58,6 +58,11 @@ mysqli_close($conn);
                                 </div>
                                 <div class="card-body table-full-width table-responsive">
                                     <table class="table table-hover table-striped">
+                                    <div class="col-md-12">
+                                    <a href="/transaction-add.php">
+                                        <button type = "Submit" class = "btn btn-info btn-fill pull-right">Add New Transaction</button>
+                                    </a>
+                                </div>
                                         <thead>
                                             <th>Date Log</th>
                                             <th>Document Code</th>
