@@ -84,15 +84,7 @@
                                             <div class="col-md-4 pr-1">
                                                 <div class="form-group">
                                                     <label>Remarks</label>
-                                                    <div class="form-group">
-                                                    <select class="form-control" name="action">
-                                                    <option>
-                                                        Select...
-                                                    </option>
-                                                        <option>Signed</option>
-                                                        <option>For Approval</option>
-                                                    </select>
-                                                </div>
+                                                    <input name="remarks" type="text" class="form-control">
                                                 </div>
                                             </div>
                                         <div class="col-md-4 pl-1">

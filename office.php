@@ -18,66 +18,75 @@
     <link href="assets/css/demo.css" rel="stylesheet" />
 </head>
 
-<?php
-require('config/config.php');
-require('config/db.php');
-
-$results_per_page = 30;
-
-$query = "SELECT * FROM office";
-$result = mysqli_query($conn, $query);
-$number_of_result = mysqli_num_rows($result);
-
-$number_of_page = ceil($number_of_result / $results_per_page);
-
-if (!isset($_GET['page'])){
-    $page = 1;
-}else{
-    $page = $_GET['page'];
-}
-
-$page_first_result = ($page-1) * $results_per_page;
-
-$query = 'SELECT * FROM office ORDER BY name LIMIT '. $page_first_result . ',' . $results_per_page;
-
-$result = mysqli_query($conn, $query);
-
-$offices = mysqli_fetch_all($result, MYSQLI_ASSOC);
-
-mysqli_free_result($result);
-
-mysqli_close($conn);
-
-?>
-
 <body>
+<?php
+    require('config/config.php');
+    require('config/db.php');
+
+    $search = isset($_GET['search']) ? $_GET['search'] : '';
+
+    $results_per_page = 30;
+
+    $query = "SELECT * FROM office";
+    $result = mysqli_query($conn, $query);
+    $number_of_result = mysqli_num_rows($result);
+
+    $number_of_page = ceil($number_of_result / $results_per_page);
+
+    if(!isset($_GET['page'])){
+        $page = 1;
+    }else{
+        $page = $_GET['page'];
+    }
+
+    $page_first_result = ($page-1) * $results_per_page;
+
+    if (strlen($search) > 0){
+        $query = 'SELECT * FROM office WHERE office.postal= '. $search . ' ORDER BY name LIMIT '. $page_first_result . ',' . $results_per_page;
+    }else{
+        $query = 'SELECT * FROM office ORDER BY name LIMIT '. $page_first_result . ',' . $results_per_page;
+    }
+    
+    $result = mysqli_query($conn, $query);
+
+    $offices = mysqli_fetch_all($result, MYSQLI_ASSOC);
+
+    mysqli_free_result($result);
+
+    mysqli_close($conn);
+?>
     <div class="wrapper">
         <div class="sidebar" data-image="../assets/img/sidebar-5.jpg">
+            
             <div class="sidebar-wrapper">
-                <?php include('includes/sidebar.php');?>
-                </ul>
+                <?php include('includes/sidebar.php'); ?>
+                
             </div>
         </div>
         <div class="main-panel">
-            <?php include ('includes/navbar.php');?>
+        <?php include('includes/navbar.php'); ?>
+            
             <div class="content">
                 <div class="container-fluid">
                     <div class="section">
                     </div>
                     <div class="row">
-                                    <div class="content">
-                <div class="container-fluid">
-                    <div class="row">
                         <div class="col-md-12">
                             <div class="card strpied-tabled-with-hover">
-                                <br/>
+                                </br>
                                 <div class="col-md-12">
-                                    <a href="/office-add.php">
-                                        <button type = "Submit" class = "btn btn-info btn-fill pull-right">Add New Office</button>
-                                    </a>
+                                    <form action="office.php" method="GET">
+                                        <input type="text" name="search" />
+                                        <input type="submit" value="Search" class="btn btn-info btn-fill" />
+                                    </form>
+                                <div class="col-md-12">
+                                    <a href="office-add.php">
+                                        <button type="submit" class="btn btn-info btn-fill pull-right">Add New Office</button>
+                                    </a>                                
                                 </div>
+
                                 <div class="card-header ">
-                                    <h4 class="card-title">Office</h4>
+                                    <h4 class="card-title">Offices</h4>
                                     <p class="card-category">Here is a subtitle for this table</p>
                                 </div>
                                 <div class="card-body table-full-width table-responsive">
@@ -90,17 +99,18 @@ mysqli_close($conn);
                                             <th>City</th>
                                             <th>Country</th>
                                             <th>Postal</th>
+
                                         </thead>
                                         <tbody>
-                                        <?php foreach($offices as $office) : ?>
+                                            <?php foreach($offices as $office) : ?>
                                             <tr>
-                                        <td><?php echo $office ['name']; ?></td>
-                                        <td><?php echo $office ['contactnum']; ?></td>
-                                        <td><?php echo $office ['email']; ?></td>
-                                        <td><?php echo $office ['address']; ?></td>
-                                        <td><?php echo $office ['city']; ?></td>
-                                        <td><?php echo $office ['country']; ?></td>
-                                        <td><?php echo $office ['postal']; ?></td>
+                                                <td><?php echo $office['name']; ?></td>
+                                                <td><?php echo $office['contactnum']; ?></td>
+                                                <td><?php echo $office['email']; ?></td>
+                                                <td><?php echo $office['address']; ?></td>
+                                                <td><?php echo $office['city']; ?></td>
+                                                <td><?php echo $office['country']; ?></td>
+                                                <td><?php echo $office['postal']; ?></td>
                                             </tr>
                                             <?php endforeach ?>
                                         </tbody>
@@ -108,12 +118,13 @@ mysqli_close($conn);
                                 </div>
                             </div>
                         </div>
-                    <?php
-                        for ($page=1; $page <= $number_of_page; $page++){ 
-                        echo '<a href="office.php?page='. $page .'"> '. $page .'</a>';}
-                    ?>
                     </div>
                 </div>
+                <?php 
+                    for($page=1; $page <= $number_of_page; $page++){
+                        echo '<a href = "office.php?page='. $page . '">' . $page . '</a>';
+                    }
+                ?>
             </div>
             <footer class="footer">
                 <div class="container-fluid">
