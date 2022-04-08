@@ -19,74 +19,73 @@
 </head>
 
 <body>
-<?php
-    require('config/config.php');
-    require('config/db.php');
+    <?php
+        require('config/config.php');
+        require('config/db.php');
 
-    $search = isset($_GET['search']) ? $_GET['search'] : '';
+        $search = isset($_GET['search']) ? $_GET['search'] : '';
 
-    $results_per_page = 30;
+        $results_per_page = 30;
 
-    $query = "SELECT * FROM transaction";
-    $result = mysqli_query($conn, $query);
-    $number_of_result = mysqli_num_rows($result);
+        $query = "SELECT * FROM transaction";
+        $result = mysqli_query($conn, $query);
+        $number_of_result = mysqli_num_rows($result);
 
-    $number_of_page = ceil($number_of_result / $results_per_page);
+        $number_of_page = ceil($number_of_result / $results_per_page);
 
-    if(!isset($_GET['page'])){
-        $page = 1;
-    }else{
-        $page = $_GET['page'];
-    }
+        if(!isset($_GET['page'])){
+            $page = 1;
+        }else{
+            $page = $_GET['page'];
+        }
 
-    $page_first_result = ($page-1) * $results_per_page;
+        $page_first_result = ($page-1) * $results_per_page;
 
-    if (strlen($search) > 0){
-        $query = 'SELECT transaction.datelog, transaction.documentcode, transaction.action, transaction.remarks, office.name as office_name, CONCAT(employee.lastname, ",", employee.firstname) as employee_fullname FROM create_record.employee, create_record.office, create_record.transaction 
-        WHERE transaction.employee_id=employee.id and transaction.office_id and transaction.documentcode =' . $search . ' ORDER BY transaction.documentcode, transaction.datelog LIMIT '. $page_first_result . ',' . $results_per_page;
-    }else{
-        $query = 'SELECT transaction.datelog, transaction.documentcode, transaction.action, transaction.remarks, office.name as office_name, CONCAT(employee.lastname, ",", employee.firstname) as employee_fullname FROM create_record.employee, create_record.office, create_record.transaction 
-        WHERE transaction.employee_id=employee.id and transaction.office_id ORDER BY transaction.documentcode, transaction.datelog LIMIT '. $page_first_result . ',' . $results_per_page;
-    }
+        if (strlen($search) > 0) {
+        $query = 'SELECT CONCAT (employee.lastname,",",employee.firstname) AS employee_fullname,  transaction.id, transaction.datelog, transaction.documentcode,transaction.action,transaction.remarks,office.name AS office_name 
+        FROM employee, office, transaction WHERE transaction.employee_id=employee.id AND transaction.office_id = office.id AND transaction.documentcode ='. $search .' ORDER BY transaction.documentcode, transaction.datelog LIMIT '.$page_first_result.','.$results_per_page;
+        }else{
+        $query = 'SELECT CONCAT (employee.lastname,",",employee.firstname) AS employee_fullname, transaction.id, transaction.datelog, transaction.documentcode,transaction.action,transaction.remarks,office.name AS office_name 
+        FROM employee, office, transaction WHERE transaction.employee_id=employee.id AND transaction.office_id = office.id LIMIT '.$page_first_result.','.$results_per_page;
+        }
 
-    $result = mysqli_query($conn, $query);
+        $result = mysqli_query($conn, $query);
 
-    $transactions = mysqli_fetch_all($result, MYSQLI_ASSOC);
+        $transactions = mysqli_fetch_all($result, MYSQLI_ASSOC);
 
-    mysqli_free_result($result);
+        mysqli_free_result($result);
 
-    mysqli_close($conn);
-?>
+        mysqli_close($conn);
+    ?>
     <div class="wrapper">
         <div class="sidebar" data-image="../assets/img/sidebar-5.jpg">
-            
+
             <div class="sidebar-wrapper">
-                <?php include('includes/sidebar.php'); ?>
+                <?php include('includes/sidebar.php');?>
                 
             </div>
         </div>
         <div class="main-panel">
-        <?php include('includes/navbar.php'); ?>
-            
+            <?php include ('includes/navbar.php');?>
+
             <div class="content">
                 <div class="container-fluid">
                     <div class="section">
                     </div>
                     <div class="row">
-                        <div class="col-md-12">
+                    <div class="col-md-12">
                             <div class="card strpied-tabled-with-hover">
-                            </br>
-                            <div class="col-md-12">
+                                <br/>
+                                <div class="col-md-12">
                                     <form action="transaction.php" method="GET">
                                         <input type="text" name="search" />
                                         <input type="submit" value="Search" class="btn btn-info btn-fill" />
-                                    </form>
+                                    </form>   
                                 </div>
                                 <div class="col-md-12">
-                                    <a href="transaction-add.php">
-                                        <button type="submit" class="btn btn-info btn-fill pull-right">Add New Transaction</button>
-                                    </a>                                
-                                </div>
+                                <a href="transaction-add.php">
+                                    <button type="submit" class="btn btn-info btn-fill pull-right">Add New Transaction</button>
+                                    </a>
                                 <div class="card-header ">
                                     <h4 class="card-title">Transactions</h4>
                                     <p class="card-category">Here is a subtitle for this table</p>
@@ -94,22 +93,29 @@
                                 <div class="card-body table-full-width table-responsive">
                                     <table class="table table-hover table-striped">
                                         <thead>
-                                            <th>Datelog</th>
+                                            <th>Date Log</th>
                                             <th>Document Code</th>
                                             <th>Action</th>
                                             <th>Office</th>
                                             <th>Employee</th>
                                             <th>Remarks</th>
+                                            <th>Action</th>
                                         </thead>
                                         <tbody>
-                                            <?php foreach($transactions as $transaction) : ?>
+                                        <?php 
+                                        foreach($transactions as $transaction) : ?>
                                             <tr>
-                                                <td><?php echo $transaction['datelog']; ?></td>
-                                                <td><?php echo $transaction['documentcode']; ?></td>
-                                                <td><?php echo $transaction['action']; ?></td>
-                                                <td><?php echo $transaction['office_name']; ?></td>
-                                                <td><?php echo $transaction['employee_fullname']; ?></td>
-                                                <td><?php echo $transaction['remarks']; ?></td>
+                                        <td><?php echo $transaction ['datelog']; ?></td>
+                                        <td><?php echo $transaction ['documentcode']; ?></td>
+                                        <td><?php echo $transaction ['action']; ?></td>
+                                        <td><?php echo $transaction ['office_name']; ?></td>
+                                        <td><?php echo $transaction ['employee_fullname']; ?></td>
+                                        <td><?php echo $transaction ['remarks']; ?></td>
+                                        <td>
+                                        <a href="transaction-edit.php?id=<?php echo $transaction['id']; ?>">
+                                            <button type="submit" class="btn btn-warning btn-fill pull-right">Edit</button>
+                                        </a>
+                                        </td>
                                             </tr>
                                             <?php endforeach ?>
                                         </tbody>
@@ -120,7 +126,7 @@
                     </div>
                     <?php 
                         for($page=1; $page <= $number_of_page; $page++){
-                            echo '<a href = "transaction.php?page='. $page . '">' . $page . '</a>';
+                            echo '<a href = "employee.php?page='. $page . '">' . $page . '</a>';
                         }
                     ?>
                 </div>
@@ -180,3 +186,5 @@
 <script src="assets/js/light-bootstrap-dashboard.js?v=2.0.0 " type="text/javascript"></script>
 <!-- Light Bootstrap Dashboard DEMO methods, don't include it in your project! -->
 <script src="assets/js/demo.js"></script>
+
+</html>

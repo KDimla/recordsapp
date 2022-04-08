@@ -19,42 +19,42 @@
 </head>
 
 <body>
-<?php
-    require('config/config.php');
-    require('config/db.php');
+    <?php
+        require('config/config.php');
+        require('config/db.php');
 
-    $search = isset($_GET['search']) ? $_GET['search'] : '';
+        $search = isset($_GET['search']) ? $_GET['search'] : '';
 
-    $results_per_page = 30;
+        $results_per_page = 30;
 
-    $query = "SELECT * FROM office";
-    $result = mysqli_query($conn, $query);
-    $number_of_result = mysqli_num_rows($result);
+        $query = "SELECT * FROM office";
+        $result = mysqli_query($conn, $query);
+        $number_of_result = mysqli_num_rows($result);
 
-    $number_of_page = ceil($number_of_result / $results_per_page);
+        $number_of_page = ceil($number_of_result / $results_per_page);
 
-    if(!isset($_GET['page'])){
-        $page = 1;
-    }else{
-        $page = $_GET['page'];
-    }
+        if(!isset($_GET['page'])){
+            $page = 1;
+        }else{
+            $page = $_GET['page'];
+        }
 
-    $page_first_result = ($page-1) * $results_per_page;
+        $page_first_result = ($page-1) * $results_per_page;
 
-    if (strlen($search) > 0){
-        $query = 'SELECT * FROM office WHERE office.postal= '. $search . ' ORDER BY name LIMIT '. $page_first_result . ',' . $results_per_page;
-    }else{
-        $query = 'SELECT * FROM office ORDER BY name LIMIT '. $page_first_result . ',' . $results_per_page;
-    }
+        if (strlen($search) > 0){
+            $query = 'SELECT * FROM office WHERE office.postal = '. $search . ' ORDER BY name LIMIT '. $page_first_result . ',' . $results_per_page;
+        }else{
+            $query = 'SELECT * FROM office ORDER BY name LIMIT '. $page_first_result . ',' . $results_per_page;
+        }
     
-    $result = mysqli_query($conn, $query);
+        $result = mysqli_query($conn, $query);
 
-    $offices = mysqli_fetch_all($result, MYSQLI_ASSOC);
+        $offices = mysqli_fetch_all($result, MYSQLI_ASSOC);
 
-    mysqli_free_result($result);
+        mysqli_free_result($result);
 
-    mysqli_close($conn);
-?>
+        mysqli_close($conn);
+    ?>
     <div class="wrapper">
         <div class="sidebar" data-image="../assets/img/sidebar-5.jpg">
             
@@ -65,7 +65,6 @@
         </div>
         <div class="main-panel">
         <?php include('includes/navbar.php'); ?>
-            
             <div class="content">
                 <div class="container-fluid">
                     <div class="section">
@@ -99,7 +98,7 @@
                                             <th>City</th>
                                             <th>Country</th>
                                             <th>Postal</th>
-
+                                            <th>Action</th>
                                         </thead>
                                         <tbody>
                                             <?php foreach($offices as $office) : ?>
@@ -111,8 +110,13 @@
                                                 <td><?php echo $office['city']; ?></td>
                                                 <td><?php echo $office['country']; ?></td>
                                                 <td><?php echo $office['postal']; ?></td>
+                                                <td>
+                                                    <a href="office-edit.php?id=<?php echo $office['id']; ?>">
+                                                        <button type="submit" class="btn btn-warning btn-fill pull-right">Edit</button>
+                                                    </a>
+                                                </td>
                                             </tr>
-                                            <?php endforeach ?>
+                                        <?php endforeach ?>
                                         </tbody>
                                     </table>
                                 </div>

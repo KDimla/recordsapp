@@ -19,55 +19,52 @@
 </head>
 
 <body>
-<?php
-    require('config/config.php');
-    require('config/db.php');
+    <?php
+        require('config/config.php');
+        require('config/db.php');
 
-    $search = isset($_GET['search']) ? $_GET['search'] : '';
+        $search = isset($_GET['search']) ? $_GET['search'] : '';
 
-    $results_per_page = 30;
+        $results_per_page = 30;
 
-    $query = "SELECT * FROM employee";
-    $result = mysqli_query($conn, $query);
-    $number_of_result = mysqli_num_rows($result);
+        $query = "SELECT * FROM employee";
+        $result = mysqli_query($conn, $query);
+        $number_of_result = mysqli_num_rows($result);
 
-    $number_of_page = ceil($number_of_result / $results_per_page);
+        $number_of_page = ceil($number_of_result / $results_per_page);
 
-    if(!isset($_GET['page'])){
-        $page = 1;
-    }else{
-        $page = $_GET['page'];
-    }
+        if(!isset($_GET['page'])){
+            $page = 1;
+        }else{
+            $page = $_GET['page'];
+        }
 
-    $page_first_result = ($page-1) * $results_per_page;
+        $page_first_result = ($page-1) * $results_per_page;
 
-    if(strlen($search) > 0){
-        $query = 'SELECT employee.lastname, employee.firstname, employee.address, office.name as office_name FROM employee, office 
-        WHERE employee.office_id = office.id and employee.address = '. $search . ' ORDER BY employee.lastname LIMIT '. $page_first_result . ',' . $results_per_page;
-    }else{
-        $query = 'SELECT employee.lastname, employee.firstname, employee.address, office.name as office_name FROM employee, office 
-        WHERE employee.office_id = office.id ORDER BY employee.lastname LIMIT '. $page_first_result . ',' . $results_per_page;
-    }
+        if(strlen($search) > 0){
+            $query = 'SELECT employee.id, employee.lastname, employee.firstname, employee.address, office.name as office_name FROM employee, office 
+            WHERE employee.office_id = office.id and employee.address = '. $search . ' ORDER BY employee.lastname LIMIT '. $page_first_result . ',' . $results_per_page;
+        }else{
+            $query = 'SELECT employee.id, employee.lastname, employee.firstname, employee.address, office.name as office_name FROM employee, office 
+            WHERE employee.office_id = office.id ORDER BY employee.lastname LIMIT '. $page_first_result . ',' . $results_per_page;
+        }
     
-    $result = mysqli_query($conn, $query);
+        $result = mysqli_query($conn, $query);
 
-    $employees = mysqli_fetch_all($result, MYSQLI_ASSOC);
+        $employees = mysqli_fetch_all($result, MYSQLI_ASSOC);
 
-    mysqli_free_result($result);
+        mysqli_free_result($result);
 
-    mysqli_close($conn);
-?>
+        mysqli_close($conn);
+    ?>
     <div class="wrapper">
         <div class="sidebar" data-image="../assets/img/sidebar-5.jpg">
-            
             <div class="sidebar-wrapper">
                 <?php include('includes/sidebar.php'); ?>
-                
             </div>
         </div>
         <div class="main-panel">
         <?php include('includes/navbar.php'); ?>
-            
             <div class="content">
                 <div class="container-fluid">
                     <div class="section">
@@ -97,8 +94,7 @@
                                             <th>First name</th>
                                             <th>Address</th>
                                             <th>Office</th>
-
-
+                                            <th>Action</th>
                                         </thead>
                                         <tbody>
                                             <?php foreach($employees as $employee) : ?>
@@ -107,7 +103,11 @@
                                                 <td><?php echo $employee['firstname']; ?></td>
                                                 <td><?php echo $employee['address']; ?></td>
                                                 <td><?php echo $employee['office_name']; ?></td>
-                                                
+                                                <td>
+                                                    <a href="employee-edit.php?id=<?php echo $employee['id']; ?>">
+                                                        <button type="submit" class="btn btn-warning btn-fill pull-right">Edit</button>
+                                                    </a>
+                                                </td>
                                             </tr>
                                             <?php endforeach ?>
                                         </tbody>
@@ -160,7 +160,6 @@
             </footer>
         </div>
     </div>
-    
 </body>
 <!--   Core JS Files   -->
 <script src="assets/js/core/jquery.3.2.1.min.js" type="text/javascript"></script>
